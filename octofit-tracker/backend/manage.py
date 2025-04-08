@@ -2,6 +2,13 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+import socket
+
+
+def find_free_port():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("", 0))
+        return s.getsockname()[1]
 
 
 def main():
@@ -19,4 +26,8 @@ def main():
 
 
 if __name__ == "__main__":
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "octofit_tracker.settings")
+    port = find_free_port()
+    print(f"Using free port: {port}")
+    sys.argv = [sys.argv[0], "runserver", f"0.0.0.0:{port}"]
     main()
